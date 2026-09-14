@@ -1,0 +1,38 @@
+#include <stdio.h>
+
+long long factorial(int n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+
+int fibonacci(int n) {
+    if (n <= 0) return 0;
+    if (n == 1) return 1;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int gcd(int a, int b) {
+    if (b == 0) return a;
+    return gcd(b, a % b);
+}
+
+int sumOfDigits(int n) {
+    if (n == 0) return 0;
+    return (n % 10) + sumOfDigits(n / 10);
+}
+
+int main() {
+    int fact_n = 6;
+    printf("Factorial of %d = %lld\n", fact_n, factorial(fact_n));
+
+    int fib_n = 7;
+    printf("Fibonacci term %d = %d\n", fib_n, fibonacci(fib_n));
+
+    int a = 54, b = 24;
+    printf("GCD of %d and %d = %d\n", a, b, gcd(a, b));
+
+    int num = 12345;
+    printf("Sum of digits of %d = %d\n", num, sumOfDigits(num));
+
+    return 0;
+}
