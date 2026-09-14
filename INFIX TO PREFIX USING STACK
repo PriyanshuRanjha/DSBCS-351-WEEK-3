@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 100
+
+struct Stack {
+    int top;
+    char arr[MAX];
+};
+
+void initStack(struct Stack* s) {
+    s->top = -1;
+}
+
+int isEmpty(struct Stack* s) {
+    return s->top == -1;
+}
+
+int isFull(struct Stack* s) {
+    return s->top == MAX - 1;
+}
+
+void push(struct Stack* s, char item) {
+    if (!isFull(s)) {
+        s->arr[++(s->top)] = item;
+    }
+}
+
+char pop(struct Stack* s) {
+    if (!isEmpty(s)) {
+        return s->arr[(s->top)--];
+    }
+    return '\0';
+}
+
+char peek(struct Stack* s) {
+    if (!isEmpty(s)) {
+        return s->arr[s->top];
+    }
+    return '\0';
+}
+
+int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    if (op == '^') return 3;
+    return 0;
+}
+
+void infixToPrefix(char* infix, char* prefix) {
+    int len = strlen(infix);
+    char rev[MAX];
+    struct Stack s;
+    initStack(&s);
+
+    for (int i = 0; i < len; i++) {
+        char c = infix[len - 1 - i];
+        if (c == '(') rev[i] = ')';
+        else if (c == ')') rev[i] = '(';
+        else rev[i] = c;
+    }
+    rev[len] = '\0';
+
+    char post[MAX];
+    int j = 0;
+    for (int i = 0; i < len; i++) {
+        char c = rev[i];
+        if (isalnum(c)) {
+            post[j++] = c;
+        } else if (c == '(') {
+            push(&s, c);
+        } else if (c == ')') {
+            while (!isEmpty(&s) && peek(&s) != '(') {
+                post[j++] = pop(&s);
+            }
+            pop(&s);
+        } else {
+            while (!isEmpty(&s) && precedence(peek(&s)) > precedence(c)) {
+                post[j++] = pop(&s);
+            }
+            push(&s, c);
+        }
+    }
+    while (!isEmpty(&s)) {
+        post[j++] = pop(&s);
+    }
+    post[j] = '\0';
+
+    for (int i = 0; i < len; i++) {
+        prefix[i] = post[len - 1 - i];
+    }
+    prefix[len] = '\0';
+}
+
+int main() {
+    char infix[MAX] = "A+B*C-(D/E^F)*G";
+    char prefix[MAX];
+
+    infixToPrefix(infix, prefix);
+
+    printf("Infix Expression: %s\n", infix);
+    printf("Prefix Expression: %s\n", prefix);
+
+    return 0;
+}
+
